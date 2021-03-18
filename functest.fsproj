@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <!--    <LangVersion>preview</LangVersion>-->
+        <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+        <OutputType>Exe</OutputType>
+        <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+    </PropertyGroup>
+
+    <Target Name="CopyRuntimes" AfterTargets="AfterBuild" Condition=" '$(OS)' == 'UNIX' ">
+        <!-- To workaround a bug where the files aren't copied correctly for non-Windows platforms -->
+        <Exec Command="rm -rf $(OutDir)bin/runtimes/* &amp;&amp; mkdir -p $(OutDir)bin/runtimes &amp;&amp; cp -R $(OutDir)runtimes/* $(OutDir)bin/runtimes/"/>
+    </Target>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.12"/>
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.1"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12"/>
+        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0"/>
+        <PackageReference Include="System.Net.NameResolution" Version="4.3.0"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="1.2.1"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="MyHttpTrigger.fs"/>
+        <Compile Include="Program.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="host.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="local.settings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+
+</Project>
